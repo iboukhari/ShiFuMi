@@ -6,11 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.example.shifumi.ui.theme.ShiFuMiTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,16 +21,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ShiFuMiTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                MaterialTheme{
+                    AppNavigation()
                 }
             }
         }
     }
 }
+
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+}
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

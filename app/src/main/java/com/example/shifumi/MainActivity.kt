@@ -4,6 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,8 +17,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +49,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.shifumi.ui.theme.ShiFuMiTheme
 
 class MainActivity : ComponentActivity() {
+    private var mediaPlayer: MediaPlayer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -54,6 +60,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        startMusic()
+    }
+
+    private fun startMusic() {
+        mediaPlayer = MediaPlayer.create(this, R.raw.ost)
+        mediaPlayer?.isLooping = true
+        mediaPlayer?.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }
 
@@ -77,18 +96,21 @@ fun HomeScreen(navController: NavHostController) {
             .fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.img),
+            painter = painterResource(id = R.drawable.ace),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )}
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize().padding(16.dp).padding(top = 50.dp),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(text = "Bienvenue dans notre jeu Shi Fu Mi",
-            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold,
             color = androidx.compose.ui.graphics.Color.White)
         Spacer(modifier = Modifier.height(100.dp))
         Button(onClick = { navController.navigate("play") },
@@ -137,7 +159,7 @@ fun PlayScreen(navController: NavHostController) {
                                 shakeCount = 0
 
                                 
-                                val weapons = listOf(R.drawable.pierre, R.drawable.papier, R.drawable.ciseaux)
+                                val weapons = listOf(R.drawable.luffy, R.drawable.garp, R.drawable.barbenoire)
                                 selectedWeapon = weapons.random()
 
                                 Log.d("Sensor", "Arme sélectionnée : $selectedWeapon")
@@ -161,28 +183,43 @@ fun PlayScreen(navController: NavHostController) {
         }
     }
 
-
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.marineford),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize()
+        )}
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp).padding(top = 40.dp),
-        verticalArrangement = Arrangement.Top,
+        modifier = Modifier.fillMaxSize().padding(50.dp),
+        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text(text = "Ecran de jeu",
-            style = MaterialTheme.typography.titleMedium)
-
         selectedWeapon?.let { weapon ->
             Image(
                 painter = painterResource(id = weapon),
                 contentDescription = "Arme sélectionnée",
-                modifier = Modifier.fillMaxSize()
-                    .padding(top = 20.dp)
-                    .height(150.dp)
+                modifier = Modifier
+                    .height(800.dp)
+                    .size(800.dp)
                     .animateContentSize()
             )
+        }
+
+        Button(onClick = { navController.navigate("home") },
+            modifier = Modifier
+                .height(60.dp)
+                .padding(horizontal = 100.dp) ){
+            Text(text = "Page d'accueil", fontSize = 15.sp)
         }
     }
 
 }
+
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
